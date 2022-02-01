@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An awesome task timer application.">
+
+    <title>Task Timer App</title>
+
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+
+    <!-- <link rel="apple-touch-icon" href="icon.png"> -->
+    <!-- Place favicon.ico in the root directory -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/main.css?v=000">
+
+    <meta name="theme-color" content="#fafafa">
+
+    <style id="local-styles"></style>
+
+</head>
+<body id="view" class="view app-view">
+
+<!-- 
+            1. Download html5boilerplate
+            2. create data folder  
+            3. create assets folder  
+            3. create components folder  
+            4. rename img folder to media
+            5. move media folder to assets
+            4. create icons folder in assets
+            5. copy hamburger and other icons to media/icons/
+            6. create css/mediaqueries.css with below template
+            7. rename main.css html5boilerplate.css
+            8. create css/main.css with below template
+            9. replace contents of index.html with below template
+            10. import libraries if necessary
+-->
+
+<!-- <span class="material-icons">add</span> -->
+<!-- <span class="material-icons">play_arrow</span> -->
+<!-- <span class="material-icons">stop</span> -->
+<!-- <span class="material-icons">navigate_next</span> -->
+
+
+
+    <!-- #region || navigation -->
+    <!-- <nav id="navigation" class="navigation">navigation</nav> -->
+    <!-- #endregion || navigation -->
+
+
+    
+
+
+    <!-- #region || content -->
+    <div class="content">
+
+
+
+
+    
+        <!-- #region || header -->
+        <header id="header" class="header container">
+
+
+
+            <h1 class="page-title">
+                Timer Name
+            </h1>
+
+
+            <span data-action="create" class="add-timer-button material-icons">play_arrow</span>
+            
+
+
+        </header>
+        <!-- #endregion || header -->
+
+
+
+
+
+        <!-- #region || toolbar -->
+        <!-- <div id="toolbar" class="toolbar"></div> -->
+        <!-- #endregion || toolbar -->
+
+
+
+
+
+        <!-- #region || main -->
+        <main id="main" class="main">
+            
+            <div class="tasklist--container">
+
+                <h2 class="tasklist--title">Directory Name</h2>
+                                
+                <ul class="tasklist">
+
+
+
+
+
+                </ul>
+
+            </div>
+
+
+        </main>
+        <!-- #endregion || main -->
+
+
+
+
+
+        <!-- #region || footer -->
+        <!-- <footer id="footer" class="footer">footer</footer> -->
+        <!-- #endregion || footer -->
+
+
+
+
+        
+    </div>
+    <!-- #endregion || content -->
+
+
+
+
+
+    <!-- <script src="js/vendor/modernizr-3.11.2.min.js"></script> -->
+    <!-- <script src="js/plugins.js?v=000"></script> -->
+    <!-- <script src="js/main.js?v=000"></script> -->
+    <script type="module" src="./js/main.js?v=000"></script>
+
+
+
+
+
+    <script>
+
+        let taskList = document.querySelector('.tasklist')
+        let tasks = []
+
+
+        /* #region || task class */
+        class Task {
+            constructor(title = "unnamed", subtitle = ""){
+                this._id = new Date().getTime()
+                this._title = title
+                this._subtitle = subtitle
+
+                tasks.push(this)
+                this.createTaskElement()
+                this.addListener()
+            }
+
+            get id(){
+                return this._id
+            }
+
+            get title(){
+                return this._title
+            }
+
+            get subtitle(){
+                return this._subtitle
+            }
+
+            get taskElement(){
+                return document.querySelector(`[data-task-id='${this.id}']`)
+            }
+
+            addListener(){
+                this.taskElement.addEventListener('click', this.eventHandler)
+            }
+
+            removeListener(){
+                this.taskElement.removeEventListener('click', this.eventHandler)
+            }
+
+            eventHandler(e){
+
+                let targetButton = e.target.dataset.action ||
+                        e.target.parentNode.dataset.action ||
+                        e.target.parentNode.parentNode.dataset.action
+
+                        // newer alternative, not supported in ie
+                        // e.target.closest('button').dataset.action
+
+                let targetTask = tasks.find(task => task.id == this.dataset.taskId)
+                
+                switch (targetButton) {
+                    case "toggle":
+                        console.log("toggle")
+                        break;
+                
+                    case "open":
+                        console.log("open")
+                        break;
+                
+                    case "edit":
+                        console.log("edit")
+                        break;
+                
+                    case "delete":
+                        console.log("delete")
+                        break;
+                
+                    default:
+                        console.log("main")
+                        break;
+                }
+
+            }
+
+            createTaskElement(){
+                if(this.taskElement) return new Error("Element already exists")
+
+                let newTaskElement = document.querySelector('.task-template').content.cloneNode(true)
+                    newTaskElement.querySelector('.task--title').textContent = this.title
+                    newTaskElement.querySelector('.task--subtitle').textContent = this.subtitle
+                let listItem = document.createElement('li')
+                    listItem.dataset.taskId = this.id
+                    listItem.classList.add('tasklist--item')
+                    listItem.appendChild(newTaskElement)
+                taskList.appendChild(listItem)
+            }
+        }
+        /* #endregion || task class */
+
+
+
+
+
+        /* #region || create temp tasks */
+        window.addEventListener('load', () => {
+
+            let sampleTasks = [
+                ["Task One", "Task One Subtitle"],
+                ["Task Two", "Task Two Subtitle"],
+                ["Task Three", "Task Three Subtitle"],
+                ["Task Four", "Task Four Subtitle"],
+                ["Task Five", "Task Five Subtitle"],
+                ["Task Six", "Task Six Subtitle"],
+                ["Task Seven", "Task Seven Subtitle"]
+            ]
+
+            let spaceOutSampleInjection = setInterval(createSamples, 2000);
+
+            function createSamples(){
+                console.log('creating sample')
+                let sample = sampleTasks.shift()
+                new Task(sample[0], sample[1])
+                if(sampleTasks.length === 0) clearInterval(spaceOutSampleInjection)
+            }
+
+        })
+        /* #endregion || create temp tasks */
+
+    </script>
+
+
+
+<!-- #region || task template -->
+<template class="task-template">
+    <div class="task">
+
+        <button data-action="toggle" class="task--btn-toggle">
+            <span class="task--icon material-icons">play_arrow</span>
+        </button>
+
+        <button data-action="main" class="task--btn-main">
+
+            <span class="task--details">
+                <span class="task--title">Task Title</span>
+                <span class="task--subtitle hidden">Task Subtitle</span>
+            </span>
+    
+            <span class="task--timer">
+                <span data-hrs>00</span>:
+                <span data-min>00</span>:
+                <span data-sec>00</span>
+            </span>
+
+        </button>
+
+        <button data-action="open" class="task--btn-open">
+            <span class="task--icon material-icons">navigate_next</span>
+        </button>
+
+        <span class="task--modMenu hidden">
+
+            <button data-action="edit" class="task--btn-edit">
+                <span>Edit</span>
+            </button>
+
+            <button data-action="delete" class="task--btn-delete">
+                <span>Delete</span>
+            </button>
+
+        </span>
+        
+    </div>
+</template>
+<!-- #endregion || task template -->
+
+</body>
+</html>

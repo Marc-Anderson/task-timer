@@ -1,0 +1,697 @@
+/*============================================================
+    welcome
+============================================================ */
+/* #region || welcome */
+/* Table Of Contents
+
+
+
+
+
+welcome
+imports
+resets
+theme
+\\light mode
+\\dark mode
+layout
+
+headings
+type scale
+
+buttons
+navigation
+
+animations
+media queries
+
+
+
+
+
+
+
+INSPIRATION
+
+*/
+/* =============================================
+    END welcome
+============================================= */
+/* #endregion || welcome */
+
+
+
+
+
+/*============================================================
+    imports
+============================================================ */
+/* #region || imports */
+
+/* @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap"); */
+/* @import url("https://fonts.googleapis.com/icon?family=Material+Icons"); */
+/* @import url("https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"); */
+
+/* @import url("./normalize.css?v=000"); */
+/* @import url("./html5boilerplate.css?v=000"); */
+/* @import url("./mediaqueries.css?v=000"); */
+
+
+/* =============================================
+    END imports
+============================================= */
+/* #endregion || imports */
+
+
+
+
+
+/*============================================================
+    resets
+============================================================ */
+/* #region || resets */
+
+
+/* ul[class] {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+} */
+
+
+ul[class] li {
+    margin: 0;
+    font-size: inherit;
+}
+
+
+ul[class] a {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+
+button, input[type=button] {
+    font: inherit;
+    font-size: inherit;
+}
+
+.material-icons {
+    font-size: inherit;
+}
+
+
+
+
+/* =============================================
+    END resets
+============================================= */
+/* #endregion || resets */
+
+
+
+
+
+
+/*============================================================
+    theme
+============================================================ */
+/* #region || theme */
+
+
+
+
+/* #region || light mode */
+@media (prefers-color-scheme: light ) {
+    :root {
+        --color-primary: #fcfcfc;
+        --color-secondary: #747474;
+        --color-accent: #18810e;
+
+        --color-neutral-100: hsl(0, 0%, 90%);
+        --color-neutral-300: hsl(0, 0%, 70%);
+        --color-neutral-500: hsl(0, 0%, 50%);
+        --color-neutral-900: hsl(214, 6%, 24%);
+
+        --font-color-light: var(--color-neutral-100);
+        --font-color-dark: var(--color-neutral-900);
+        --border-color-primary: var(--color-neutral-500);
+
+        --color-warning: rgb(245, 164, 71);
+        --color-danger: rgb(255, 107, 70);
+    }
+
+
+    html {
+        font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+        font-size: 100%;
+        line-height: 1.2;
+        color: var(--font-color-dark);
+    }
+
+    body {
+        background-color: var(--color-primary);
+    }
+
+    
+    h1,h2,h3,h4,h5,h6 {
+        color: var(--font-color-dark);
+    }
+
+
+}
+/* #endregion || light mode */
+
+
+
+
+/* #region || dark mode */
+/* @media (prefers-color-scheme: dark ) {} */
+/* #endregion || dark mode */
+
+
+
+
+/* =============================================
+    END theme
+============================================= */
+/* #endregion || theme */
+
+
+
+
+/*============================================================
+    layout  
+============================================================ */
+/* #region || layout */
+
+
+
+
+/* #region || temp colors */
+/* .view { background-color:       rgb(205,205,205); } */
+/* .navigation { background-color: rgb(205,226,221); } */
+/* .content { background-color: rgb(100,226,221); } */
+/* .header { background-color:     rgb(255,211,205); } */
+/* .toolbar { background-color:    rgb(255,155,123); } */
+/* .main { background-color:    rgb(123,155,255); } */
+/* .footer { background-color:      rgb(225,123,215); } */
+/* #endregion || temp colors */
+
+
+
+
+
+/* :root {} */
+
+body {
+    display: flex;
+    flex-direction: column;
+    /* flex-direction: column-reverse; */
+    min-height: 100vh;
+    margin: 0;
+}
+
+
+.navigation {
+    grid-area: navigation;
+    /* position: sticky; */
+    /* bottom: 0; */
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    grid-area: content;
+}
+
+
+.header {
+    grid-area: header;
+    /* position: sticky; */
+    /* top: 0; */
+}
+
+
+.toolbar {
+    grid-area: toolbar;
+}
+
+
+.main {
+    flex-grow: 1;
+    grid-area: main;
+}
+
+
+.footer {
+    grid-area: footer;
+}
+
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {}
+
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {}
+
+
+
+
+
+/* =============================================
+    END layout
+============================================= */
+/* #endregion || layout */
+
+
+
+
+
+/*============================================================
+    headings
+============================================================ */
+/* #region || headings */
+
+
+
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+h4 {
+    font-size: 1em;
+}
+
+h5 {
+    font-size: .83em;
+}
+
+h6 {
+    font-size: .67em;
+}
+
+
+
+
+
+/* =============================================
+    END headings
+============================================= */
+/* #endregion || headings */
+
+
+
+
+
+/*============================================================
+    type scale
+============================================================ */
+/* #region || type scale */
+
+
+
+
+p,
+li {
+    font-size: 1.1em;
+    margin: 0 0 1em;
+}
+
+
+.fs-4xl { font-size: 4em; }
+.fs-3xl { font-size: 3em; }
+.fs-2xl { font-size: 2em; }
+.fs-xl { font-size: 1.5em; }
+.fs-lg { font-size: 1.17em; }
+.fs-md { font-size: 1em; }
+.fs-sm { font-size: .83em; }
+.fs-xs { font-size: .76em; }
+.fs-2xs { font-size: .67em; }
+
+
+blockquote > p::before {
+    content: '"';
+}
+
+blockquote > p::after {
+    content: '"';
+}
+
+
+
+
+/* =============================================
+    END type scale
+============================================= */
+/* #endregion || type scale */
+
+
+
+
+
+/*============================================================
+    buttons
+============================================================ */
+/* #region || buttons */
+
+
+
+button:hover {
+    filter: brightness(.9);
+}
+
+
+
+
+
+/* =============================================
+    END buttons
+============================================= */
+/* #endregion || buttons */
+
+
+
+
+
+/*============================================================
+    header
+============================================================ */
+/* #region || header */
+
+
+header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: .4em .7em;
+}
+
+
+.page-title {
+    margin: 0;
+}
+
+
+.add-timer-button {
+    font-size: 2rem;
+}
+
+
+
+/* =============================================
+    END header
+============================================= */
+/* #endregion || header */
+
+
+/* NOTES */
+/* font-size: clamp(70%, 3vw, 100%); */
+/* margin-inline: auto; */
+/* width: min(95%, 40rem); */
+
+
+/*============================================================
+    tasklist
+============================================================ */
+/* #region || tasklist */
+
+
+
+/* .tasklist--container {} */
+.tasklist {
+    font-size: clamp(100%, 3vw, 120%);
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.tasklist--title {
+    font-size: 1em;
+    margin: 0 auto;
+    font-weight: 400;
+    width: 87%;
+}
+
+/* .tasklist--item {} */
+
+
+
+
+/* =============================================
+    END tasklist
+============================================= */
+/* #endregion || tasklist */
+
+
+
+
+
+/*============================================================
+    task
+============================================================ */
+/* #region || task */
+
+
+
+.task {
+    display: flex;
+}
+
+
+.task button {
+    border: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+}
+
+
+.task--btn-toggle {
+    align-items: center;
+    display: flex;
+    padding: 0;
+}
+
+
+.task--icon {
+    font-size: 2.2em;
+}
+
+
+.task--btn-main {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.task--details {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    flex-grow: 1;
+}
+
+
+.task--title {
+    max-width: 97%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.task--subtitle {
+    max-width: 97%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: .83rem;
+}
+
+
+.task--timer {
+    display: flex;
+    white-space: nowrap;
+}
+
+
+.task--btn-open {
+    align-items: center;
+    display: flex;
+    padding: 0;
+}
+
+
+.task--modMenu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+.task--btn-edit {
+    align-items: center;
+    background-color: var(--color-warning);
+}
+
+
+.task--btn-delete {
+    align-items: center;
+    background-color: var(--color-danger);
+}
+
+
+
+/* =============================================
+    END task
+============================================= */
+/* #endregion || task */
+
+
+
+
+
+/*============================================================
+    navigation
+============================================================ */
+/* #region || navigation */
+
+
+
+
+
+
+
+
+
+/* =============================================
+    END navigation
+============================================= */
+/* #endregion || navigation */
+
+
+
+
+
+/*============================================================
+    utilities
+============================================================ */
+/* #region || utilities */
+
+
+
+
+.hidden {
+    display: none;
+    visibility: none;
+}
+
+.ellipsis {
+    max-width: 97%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+
+/* =============================================
+    END utilities
+============================================= */
+/* #endregion || utilities */
+
+
+
+
+
+/*============================================================
+    animations
+============================================================ */
+/* #region || animations */
+
+
+
+
+
+
+
+@keyframes wobble {
+    0% {
+    }
+    25% {
+    }
+    50% {
+    }
+    100% {
+    }
+}
+
+
+
+
+
+
+
+/* =============================================
+    END animations
+============================================= */
+/* #endregion || animations */
+
+
+
+
+
+/*============================================================
+    media queries
+============================================================ */
+/* #region || media queries */
+
+
+
+
+
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {}
+
+
+
+
+
+
+
+/* =============================================
+    END media queries
+============================================= */
+/* #endregion || media queries */
