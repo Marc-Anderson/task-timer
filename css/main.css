@@ -430,9 +430,15 @@ header {
 
 
 
-/* .tasklist--container {} */
+.tasklist--container {
+    width: min(100%, 30rem);
+    margin-inline: auto;
+}
+
+
 .tasklist {
     font-size: clamp(100%, 3vw, 120%);
+    /* font-size: clamp(135%, 3vw, 186%); */
     margin: 0;
     padding: 0;
     list-style-type: none;

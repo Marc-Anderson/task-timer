@@ -148,8 +148,16 @@
 
     <script>
 
+        let isTouchDevice;
         let taskList = document.querySelector('.tasklist')
         let tasks = []
+        let holdTimer;
+        let holdDuration = 1000
+
+        function detectTouchDevice() {
+            'ontouchstart' in window ? isTouchDevice = true :  isTouchDevice = false
+        }
+
 
 
         /* #region || task class */
@@ -161,7 +169,7 @@
 
                 tasks.push(this)
                 this.createTaskElement()
-                this.addListener()
+                this.addListeners()
             }
 
             get id(){
@@ -180,12 +188,42 @@
                 return document.querySelector(`[data-task-id='${this.id}']`)
             }
 
-            addListener(){
-                this.taskElement.addEventListener('click', this.eventHandler)
+            get modButtons(){
+                return this.taskElement.querySelector('.task--modMenu').querySelectorAll('button')
             }
 
-            removeListener(){
+            addListeners(){
+                this.taskElement.addEventListener('click', this.eventHandler)
+
+                if (isTouchDevice) {
+                    this.taskElement.addEventListener('touchstart', this.longHoldHandler)
+                    this.taskElement.addEventListener('touchend', this.longHoldHandler)
+                } else {
+                    this.taskElement.addEventListener('mousedown', this.longHoldHandler)
+                    this.taskElement.addEventListener('mouseup', this.longHoldHandler)
+                }
+                
+                this.modButtons.forEach( button => {
+                    button.addEventListener('blur', this.clickAwayFromModMenu)
+                }); 
+
+            }
+
+            removeListeners(){
                 this.taskElement.removeEventListener('click', this.eventHandler)
+
+                if (isTouchDevice) {
+                    this.taskElement.removeEventListener('touchstart', this.longHoldHandler)
+                    this.taskElement.removeEventListener('touchend', this.longHoldHandler)
+                } else {
+                    this.taskElement.removeEventListener('mousedown', this.longHoldHandler)
+                    this.taskElement.removeEventListener('mouseup', this.longHoldHandler)
+                }
+
+                this.modButtons.forEach( button => {
+                    button.removeEventListener('blur', this.clickAwayFromModMenu)
+                }); 
+
             }
 
             eventHandler(e){
@@ -193,9 +231,6 @@
                 let targetButton = e.target.dataset.action ||
                         e.target.parentNode.dataset.action ||
                         e.target.parentNode.parentNode.dataset.action
-
-                        // newer alternative, not supported in ie
-                        // e.target.closest('button').dataset.action
 
                 let targetTask = tasks.find(task => task.id == this.dataset.taskId)
                 
@@ -235,6 +270,43 @@
                     listItem.appendChild(newTaskElement)
                 taskList.appendChild(listItem)
             }
+
+            
+            toggleModMenu(){
+                this.taskElement.querySelector('.task--modMenu').classList.toggle('hidden')
+            }
+
+
+            clickAwayFromModMenu(e) {
+                let taskElement = e.target.closest('.tasklist--item')
+                let targetTask = tasks.find(task => task.id == taskElement.dataset.taskId)
+                if (e.relatedTarget !== targetTask.modButtons[0] && e.relatedTarget !== targetTask.modButtons[1]) {
+                    targetTask.toggleModMenu()
+                }
+            }
+
+
+            longHoldHandler(e){
+
+                if(e.type === "mousedown" || e.type === "touchstart"){
+
+                    holdTimer = setTimeout(() => {
+
+                        let targetTask = tasks.find(task => task.id == this.dataset.taskId)
+
+                        targetTask.toggleModMenu()
+                        targetTask.modButtons[0].focus()
+
+                    }, holdDuration);
+
+                } else if(e.type === "mouseup" || e.type === "touchend"){
+
+                    clearTimeout(holdTimer)
+
+                }
+
+            }
+
         }
         /* #endregion || task class */
 
@@ -242,8 +314,15 @@
 
 
 
+
+
+
+
+
         /* #region || create temp tasks */
         window.addEventListener('load', () => {
+
+            detectTouchDevice()
 
             let sampleTasks = [
                 ["Task One", "Task One Subtitle"],
