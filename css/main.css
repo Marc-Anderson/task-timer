@@ -701,3 +701,48 @@ header {
     END media queries
 ============================================= */
 /* #endregion || media queries */
+
+
+
+
+
+
+
+/*============================================================
+    PLAYING AROUND
+============================================================ */
+/* #region || PLAYING AROUND */
+
+
+/* Large devices (laptops/desktops, 992px and up) */
+/* @media only screen and (min-width: 600px) {
+    button {
+        background-color: inherit;
+    }
+
+    .tasklist {
+        overflow-y: auto;
+        max-height: 300px;
+    }
+
+    .main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(200deg, #42cf4a3b, #222da94d);
+    }
+
+    .tasklist--container {
+        padding: 1em;
+        background-color: rgb(220 220 220 / 60%);
+        border-radius: 1em;
+        backdrop-filter: blur(57px);
+        box-shadow: 2px 3px 6px 0px rgba(0,0,0,.2);
+    }
+} */
+
+
+/* =============================================
+    END PLAYING AROUND
+============================================= */
+/* #endregion || PLAYING AROUND */

@@ -78,7 +78,7 @@
             </h1>
 
 
-            <span data-action="create" class="add-timer-button material-icons">play_arrow</span>
+            <span data-action="create" class="add-timer-button material-icons">add</span>
             
 
 
@@ -166,10 +166,9 @@
                 this._id = new Date().getTime()
                 this._title = title
                 this._subtitle = subtitle
-
-                tasks.push(this)
-                this.createTaskElement()
-                this.addListeners()
+                this._active = false
+                this._history = []
+                this.timer;
             }
 
             get id(){
@@ -184,12 +183,78 @@
                 return this._subtitle
             }
 
+            get active(){
+                return this._active
+            }
+
             get taskElement(){
                 return document.querySelector(`[data-task-id='${this.id}']`)
             }
 
             get modButtons(){
                 return this.taskElement.querySelector('.task--modMenu').querySelectorAll('button')
+            }
+
+            toggleTimer(){
+
+                let currentTime = new Date().getTime()
+
+                if (this._history.length === 0 || this._history[this._history.length - 1].length === 2) {
+                    this._history.push([currentTime])
+                    this.startTimer()
+                    this._active = true
+                } else {
+                    this._history[this._history.length - 1].push(currentTime)
+                    this._active = false
+                    this.stopTimer()
+                }
+
+                return currentTime
+            }
+
+            startTimer(){
+                this.timer = setInterval(this.updateTimerElement.bind(this), 1000);
+            }
+
+            updateTimerElement(){
+                this.setTimerElement(this.getTotalTime())
+            }
+
+            stopTimer(){
+                clearInterval(this.timer)
+            }
+
+            getTotalTime(){
+                let tempHistory = this._history.map(item => item.slice())
+                if (tempHistory.length > 0 && tempHistory[tempHistory.length - 1].length !== 2) {
+                    let currentTime = new Date().getTime()
+                    tempHistory[tempHistory.length - 1].push(currentTime)
+                }
+                let sumTimeOfHistory = tempHistory.reduce((previous, current) => {
+                    return (current[1] - current[0]) + previous
+                },0)
+                return sumTimeOfHistory
+            }
+
+            setTimerElement(timeInMilliseconds = 0){
+
+                let hrsElement = this.taskElement.querySelector('[data-hrs]')
+                let minElement = this.taskElement.querySelector('[data-min]')
+                let secElement = this.taskElement.querySelector('[data-sec]')
+
+                let hrs = timeInMilliseconds / 3600000
+                let min = (hrs % 1) * 60
+                let sec = (min % 1) * 60
+
+                let time = [hrs,min,sec]
+
+                time = time.map(num => {
+                    return Math.floor(num).toString().padStart(2,'0')
+                })
+
+                hrsElement.textContent = time[0]
+                minElement.textContent = time[1]
+                secElement.textContent = time[2]
             }
 
             addListeners(){
@@ -236,7 +301,7 @@
                 
                 switch (targetButton) {
                     case "toggle":
-                        console.log("toggle")
+                        targetTask.toggleTimer()
                         break;
                 
                     case "open":
@@ -248,7 +313,7 @@
                         break;
                 
                     case "delete":
-                        console.log("delete")
+                        targetTask.deleteTask()
                         break;
                 
                     default:
@@ -256,6 +321,7 @@
                         break;
                 }
 
+                backupTasksToLocalStorage()
             }
 
             createTaskElement(){
@@ -287,64 +353,66 @@
 
 
             longHoldHandler(e){
-
                 if(e.type === "mousedown" || e.type === "touchstart"){
-
                     holdTimer = setTimeout(() => {
-
                         let targetTask = tasks.find(task => task.id == this.dataset.taskId)
-
                         targetTask.toggleModMenu()
                         targetTask.modButtons[0].focus()
-
                     }, holdDuration);
-
                 } else if(e.type === "mouseup" || e.type === "touchend"){
-
                     clearTimeout(holdTimer)
-
                 }
+            }
 
+            deleteTask(){
+                this.stopTimer()
+                this.removeListeners()
+                this.taskElement.remove()
+            }
+
+            recoverTask(){
+                this.createTaskElement()
+                if(this.active){
+                    this.startTimer()
+                } else {
+                    this.updateTimerElement()
+                }
+                this.addListeners()
             }
 
         }
         /* #endregion || task class */
 
 
+        function backupTasksToLocalStorage(){
+            localStorage.setItem('persistentTasks', JSON.stringify(tasks))
+        }
+
+        function recoverLocalStorageTasks(){
+            recoveredTasks = JSON.parse(localStorage.getItem('persistentTasks'))
+
+            recoveredTasks.forEach(task => {
+                task = Object.assign(new Task, task)
+                tasks.push(task)
+                task.recoverTask()
+                return task
+            })
+
+        }
 
 
 
-
-
-
-
-
-        /* #region || create temp tasks */
+        /* #region || wait for document to load */
         window.addEventListener('load', () => {
 
             detectTouchDevice()
 
-            let sampleTasks = [
-                ["Task One", "Task One Subtitle"],
-                ["Task Two", "Task Two Subtitle"],
-                ["Task Three", "Task Three Subtitle"],
-                ["Task Four", "Task Four Subtitle"],
-                ["Task Five", "Task Five Subtitle"],
-                ["Task Six", "Task Six Subtitle"],
-                ["Task Seven", "Task Seven Subtitle"]
-            ]
-
-            let spaceOutSampleInjection = setInterval(createSamples, 2000);
-
-            function createSamples(){
-                console.log('creating sample')
-                let sample = sampleTasks.shift()
-                new Task(sample[0], sample[1])
-                if(sampleTasks.length === 0) clearInterval(spaceOutSampleInjection)
+            if (localStorage.getItem("persistentTasks") !== null) {
+                recoverLocalStorageTasks()
             }
 
         })
-        /* #endregion || create temp tasks */
+        /* #endregion || wait for document to load */
 
     </script>
 
