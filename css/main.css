@@ -139,6 +139,18 @@ button, input[type=button] {
 
         --color-warning: rgb(245, 164, 71);
         --color-danger: rgb(255, 107, 70);
+
+        --font-size-4xl: 4em;
+        --font-size-3xl: 3em;
+        --font-size-2xl: 2em;
+        --font-size-xl: 1.5em;
+        --font-size-lg: 1.17em;
+        --font-size-md: 1em;
+        --font-size-sm: .83em;
+        --font-size-xs: .76em;
+        --font-size-2xs: .67em;
+
+        --filter-light-900: brightness(.9)
     }
 
 
@@ -368,12 +380,13 @@ blockquote > p::after {
 /* #region || buttons */
 
 
-
-button:hover {
-    filter: brightness(.9);
+button {
+    border: none;
+    background-color: var(--color-accent);
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
 }
-
-
 
 
 
@@ -391,12 +404,16 @@ button:hover {
 ============================================================ */
 /* #region || header */
 
+header {
+    --header-padding: .4em .7em;
+}
+
 
 header {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    padding: .4em .7em;
+    padding: var(--header-padding);
 }
 
 
@@ -428,32 +445,47 @@ header {
 ============================================================ */
 /* #region || tasklist */
 
-
-
-.tasklist--container {
-    width: min(100%, 30rem);
-    margin-inline: auto;
+.tasklist {
+    --tasklist-width: min(100%, 30rem);
+    --tasklist-font-size: clamp(100%, 3vw, 120%);
 }
 
 
 .tasklist {
-    font-size: clamp(100%, 3vw, 120%);
-    /* font-size: clamp(135%, 3vw, 186%); */
+    width: var(--tasklist-width);
+    margin-inline: auto;
+    font-size: var(--tasklist-font-size);
+}
+
+
+.tasklist--list {
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
 .tasklist--title {
-    font-size: 1em;
+    font-size: var(--font-size-md);
     margin: 0 auto;
     font-weight: 400;
     width: 87%;
 }
 
-/* .tasklist--item {} */
+.tasklist--item {
+    background-color: var(--color-neutral-100);
+}
 
+.tasklist--item.active {
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    animation-name: flashing;
+    /* background-color: var(--color-primary); */
+}    
 
+.tasklist--item:hover {
+    filter: var(--filter-light-900);
+    animation: none;
+}
 
 
 /* =============================================
@@ -462,7 +494,17 @@ header {
 /* #endregion || tasklist */
 
 
-
+/* 
+    moved from pca to another company and they are a disaster
+    installed server 13 mo ago
+    talked to pca again
+    options are 
+        one drive local
+        sharepoint for onedrive
+        what is the best backup system
+        internet pics 
+        camera originals
+*/
 
 
 /*============================================================
@@ -476,21 +518,37 @@ header {
     display: flex;
 }
 
-
-.task button {
-    border: none;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin: 0;
+.task--btn-toggle,
+.task--btn-main,
+.task--btn-open,
+.task--btn-edit,
+.task--btn-delete,
+.task--btn-create {
+    background-color: transparent;
 }
 
+.task--btn-toggle:active,
+.task--btn-main:active,
+.task--btn-open:active,
+.task--btn-edit:active,
+.task--btn-delete :active,
+.task--btn-create:active {
+    background-color: rgba(0,0,0,0.08);
+}
+
+.task--entry {}
+
+.task--btn-create {
+    align-items: center;
+    display: flex;
+    padding: 0;
+}
 
 .task--btn-toggle {
     align-items: center;
     display: flex;
     padding: 0;
 }
-
 
 .task--icon {
     font-size: 2.2em;
@@ -507,7 +565,7 @@ header {
 }
 
 
-.task--details {
+.task--main-content {
     overflow: hidden;
     text-overflow: ellipsis;
     display: flex;
@@ -576,6 +634,37 @@ header {
 
 
 /*============================================================
+    text input
+============================================================ */
+/* #region || text input */
+
+
+.task--input-field {
+    margin: .2em;
+    padding: 0.1em 0.1em 0em;
+    font-size: 1.4rem;
+    flex-grow: 1;
+    text-align: center;
+    border: none;
+    border-radius: .5rem;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 53%, rgba(0,0,0,0.08) 100%);
+}
+
+
+
+
+
+
+/* =============================================
+    END text input
+============================================= */
+/* #endregion || text input */
+
+
+
+
+
+/*============================================================
     navigation
 ============================================================ */
 /* #region || navigation */
@@ -633,6 +722,21 @@ header {
     animations
 ============================================================ */
 /* #region || animations */
+
+
+
+
+
+
+
+@keyframes flashing {
+    0% {
+        filter: brightness(0.95);
+    }
+    100% {
+        filter: brightness(0.98);
+    }
+}
 
 
 
@@ -732,7 +836,7 @@ header {
         background: linear-gradient(200deg, #42cf4a3b, #222da94d);
     }
 
-    .tasklist--container {
+    .tasklist {
         padding: 1em;
         background-color: rgb(220 220 220 / 60%);
         border-radius: 1em;
@@ -746,3 +850,13 @@ header {
     END PLAYING AROUND
 ============================================= */
 /* #endregion || PLAYING AROUND */
+
+
+
+.generate-samples-button {
+    background-color: transparent;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 47px;
+}

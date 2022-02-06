@@ -90,7 +90,9 @@
 
 
         <!-- #region || toolbar -->
-        <!-- <div id="toolbar" class="toolbar"></div> -->
+        <div id="toolbar" class="toolbar">
+            
+        </div>
         <!-- #endregion || toolbar -->
 
 
@@ -100,11 +102,28 @@
         <!-- #region || main -->
         <main id="main" class="main">
             
-            <div class="tasklist--container">
+            <div class="tasklist">
+                <div class="task task--entry">
+                    
+                    <button data-action="create-and-activate" class="task--btn-create" onclick="processTaskFromFieldEntry(true)"  aria-label="submit and start task">
+                        <span class="task--icon material-icons">play_arrow</span>
+                    </button>
+            
+            
+                    <span class="task--main-content">
+                        <input aria-label="task entry" tabindex="1" type="text" name="task--input-field" id="task--input-field" class="task--input-field">
+                    </span>
+                
+            
+                    <button data-action="create" class="task--btn-create" onclick="processTaskFromFieldEntry()"  aria-label="submit task">
+                        <span class="task--icon material-icons">add</span>
+                    </button>
+                    
+                </div>  
 
                 <h2 class="tasklist--title">Directory Name</h2>
                                 
-                <ul class="tasklist">
+                <ul class="tasklist--list">
 
 
 
@@ -114,7 +133,7 @@
 
             </div>
 
-
+            <button class="generate-samples-button" onclick="generateSamples()">generate samples</button>
         </main>
         <!-- #endregion || main -->
 
@@ -148,14 +167,13 @@
 
     <script>
 
-        let isTouchDevice;
-        let taskList = document.querySelector('.tasklist')
+        let taskList = document.querySelector('.tasklist--list')
         let tasks = []
         let holdTimer;
         let holdDuration = 1000
 
-        function detectTouchDevice() {
-            'ontouchstart' in window ? isTouchDevice = true :  isTouchDevice = false
+        function isTouchDevice() {
+            return 'ontouchstart' in window
         }
 
 
@@ -166,9 +184,9 @@
                 this._id = new Date().getTime()
                 this._title = title
                 this._subtitle = subtitle
-                this._active = false
+                this._isTimerActive = false
                 this._history = []
-                this.timer;
+                this._timer;
             }
 
             get id(){
@@ -179,12 +197,18 @@
                 return this._title
             }
 
+            set title(newTitle){
+                this._title = newTitle.toString()
+                saveTasksToLocalStorage()
+                this.generateTaskElement()
+            }
+
             get subtitle(){
                 return this._subtitle
             }
 
-            get active(){
-                return this._active
+            get isTimerActive(){
+                return this._isTimerActive
             }
 
             get taskElement(){
@@ -201,27 +225,29 @@
 
                 if (this._history.length === 0 || this._history[this._history.length - 1].length === 2) {
                     this._history.push([currentTime])
-                    this.startTimer()
-                    this._active = true
+                    this.startTimerElement()
+                    this._isTimerActive = true
                 } else {
                     this._history[this._history.length - 1].push(currentTime)
-                    this._active = false
-                    this.stopTimer()
+                    this._isTimerActive = false
+                    this.stopTimerElement()
                 }
-
                 return currentTime
+                saveTasksToLocalStorage()
             }
 
-            startTimer(){
-                this.timer = setInterval(this.updateTimerElement.bind(this), 1000);
+            startTimerElement(){
+                this._timer = setInterval(this.updateTimerElement.bind(this), 1000);
+                this.taskElement.classList.add('active')
             }
 
+            stopTimerElement(){
+                this.taskElement.classList.remove('active')
+                clearInterval(this._timer)
+            }
+            
             updateTimerElement(){
                 this.setTimerElement(this.getTotalTime())
-            }
-
-            stopTimer(){
-                clearInterval(this.timer)
             }
 
             getTotalTime(){
@@ -238,13 +264,19 @@
 
             setTimerElement(timeInMilliseconds = 0){
 
+                if(isNaN(timeInMilliseconds)) return new Error("This is not a valid number")
+
+                const MILLISECONDS_IN_HOUR = 36e5
+                const MINS_IN_HOUR = 60
+                const SECS_IN_MIN = 60
+
                 let hrsElement = this.taskElement.querySelector('[data-hrs]')
                 let minElement = this.taskElement.querySelector('[data-min]')
                 let secElement = this.taskElement.querySelector('[data-sec]')
 
-                let hrs = timeInMilliseconds / 3600000
-                let min = (hrs % 1) * 60
-                let sec = (min % 1) * 60
+                let hrs = timeInMilliseconds / MILLISECONDS_IN_HOUR
+                let min = (hrs % 1) * MINS_IN_HOUR
+                let sec = (min % 1) * SECS_IN_MIN
 
                 let time = [hrs,min,sec]
 
@@ -260,7 +292,7 @@
             addListeners(){
                 this.taskElement.addEventListener('click', this.eventHandler)
 
-                if (isTouchDevice) {
+                if (isTouchDevice()) {
                     this.taskElement.addEventListener('touchstart', this.longHoldHandler)
                     this.taskElement.addEventListener('touchend', this.longHoldHandler)
                 } else {
@@ -277,7 +309,7 @@
             removeListeners(){
                 this.taskElement.removeEventListener('click', this.eventHandler)
 
-                if (isTouchDevice) {
+                if (isTouchDevice()) {
                     this.taskElement.removeEventListener('touchstart', this.longHoldHandler)
                     this.taskElement.removeEventListener('touchend', this.longHoldHandler)
                 } else {
@@ -309,7 +341,7 @@
                         break;
                 
                     case "edit":
-                        console.log("edit")
+                        editTask(targetTask)
                         break;
                 
                     case "delete":
@@ -320,21 +352,44 @@
                         console.log("main")
                         break;
                 }
-
-                backupTasksToLocalStorage()
             }
 
-            createTaskElement(){
-                if(this.taskElement) return new Error("Element already exists")
+            generateTaskElement(){
+                let taskElement;
+                let taskContents;
 
-                let newTaskElement = document.querySelector('.task-template').content.cloneNode(true)
-                    newTaskElement.querySelector('.task--title').textContent = this.title
-                    newTaskElement.querySelector('.task--subtitle').textContent = this.subtitle
-                let listItem = document.createElement('li')
-                    listItem.dataset.taskId = this.id
-                    listItem.classList.add('tasklist--item')
-                    listItem.appendChild(newTaskElement)
-                taskList.appendChild(listItem)
+                if(this.taskElement) {
+                    this.stopTimerElement()
+                    this.removeListeners()
+                    taskElement = this.taskElement
+                } else {
+                    taskContents = document.querySelector('.task-template').content.cloneNode(true)
+                    taskElement = document.createElement('li')
+                    taskElement.appendChild(taskContents)
+                    taskElement.dataset.taskId = this.id
+                    taskList.appendChild(taskElement)
+                }
+
+                taskElement.querySelector('.task--title').textContent = this.title
+                taskElement.querySelector('.task--subtitle').textContent = this.subtitle
+                taskElement.classList.add('tasklist--item')
+
+                if(this.isTimerActive){
+                    this.startTimerElement()
+                } else {
+                    this.updateTimerElement()
+                }
+                this.addListeners()
+
+            }
+
+
+            deleteTask(){
+                this.stopTimerElement()
+                this.removeListeners()
+                this.taskElement.remove()
+                tasks = tasks.filter(task => task !== this)
+                saveTasksToLocalStorage()
             }
 
             
@@ -364,29 +419,16 @@
                 }
             }
 
-            deleteTask(){
-                this.stopTimer()
-                this.removeListeners()
-                this.taskElement.remove()
-            }
-
-            recoverTask(){
-                this.createTaskElement()
-                if(this.active){
-                    this.startTimer()
-                } else {
-                    this.updateTimerElement()
-                }
-                this.addListeners()
-            }
 
         }
         /* #endregion || task class */
 
 
-        function backupTasksToLocalStorage(){
+        function saveTasksToLocalStorage(){
             localStorage.setItem('persistentTasks', JSON.stringify(tasks))
+            console.log("Data Saved")
         }
+
 
         function recoverLocalStorageTasks(){
             recoveredTasks = JSON.parse(localStorage.getItem('persistentTasks'))
@@ -394,25 +436,97 @@
             recoveredTasks.forEach(task => {
                 task = Object.assign(new Task, task)
                 tasks.push(task)
-                task.recoverTask()
+                task.generateTaskElement()
                 return task
             })
 
         }
 
+        function processTaskFromFieldEntry(andStartTimer = false){
+            
+            let taskInputField = document.querySelector('.task--input-field')
+            let taskTitle = taskInputField.value
+            let task
+
+            if(taskTitle === "") return
+
+            if(taskInputField.matches('[data-editing]')){
+                let taskId = taskInputField.dataset.editing
+                task = tasks.filter(task => task.id == taskId)[0]
+                task.title = taskTitle
+                taskInputField.removeAttribute('data-editing')
+            } else {
+                task = new Task(taskTitle)
+                tasks.push(task)
+            }
+
+            task.generateTaskElement()
+            
+            if(andStartTimer){
+                task.toggleTimer()
+            }
+
+            saveTasksToLocalStorage()
+            taskInputField.value = ""
+        }
+
+        function editTask(task){
+            let taskInputField = document.querySelector('.task--input-field')
+            taskInputField.value = task.title
+            taskInputField.focus()
+            taskInputField.select()
+            taskInputField.dataset.editing = task.id          
+        }
 
 
-        /* #region || wait for document to load */
+        function detectPressingEnter(element, callback){
+            element.addEventListener('keypress', checkIfKeyIsEnter)
+            function checkIfKeyIsEnter(e){
+                if(e.key === "Enter"){
+                    e.preventDefault()
+                    callback()
+                }
+            }
+        }
+
+
+        function detectFocusout(element, callback){
+            element.addEventListener('focusout', processFocusout)
+
+            function processFocusout(e){
+                callback()
+            }
+        }
+
+        function clearInput(){
+            let taskInputField = document.querySelector('.task--input-field')
+            taskInputField.value = ""
+        }
+
+
+        function generateSamples() {
+            if(tasks.length === 0) {
+                tasks = [{"_id":1643940717646,"_title":"Task One","_subtitle":"Task One Subtitle","_isTimerActive":true,"_history":[[1644020951759,1644026895774],[1644026902041,1644026908114],[1644026911405,1644026914177],[1644076089412]],"_active":false,"_timer":1},{"_id":1643940720302,"_title":"Task Two","_subtitle":"Task Two Subtitle","_isTimerActive":false,"_history":[[1643942842274,1643942852786],[1643942886432,1643943478246],[1643944023554,1644016756727],[1644016763083,1644020631320],[1644026903594,1644026909701]],"_active":true,"timer":1,"_timer":6},{"_id":1643940722303,"_title":"Task Three","_subtitle":"Task Three Subtitle","_isTimerActive":false,"_history":[[1643943477557,1643944824287]],"_active":false,"timer":2},{"_id":1643940724008,"_title":"Task Four","_subtitle":"Task Four Subtitle","_isTimerActive":true,"_history":[[1643943440332,1643943473015],[1644026928515]],"_active":false,"timer":2,"_timer":2},{"_id":1643940725655,"_title":"Task Five","_subtitle":"Task Five Subtitle","_isTimerActive":true,"_history":[[1644026923090,1644026925946],[1644076145710]],"_active":false,"_timer":3},{"_id":1644029047492,"_title":"Task Six","_subtitle":"","_isTimerActive":false,"_history":[]},{"_id":1644029052177,"_title":"Task Seven","_subtitle":"","_isTimerActive":true,"_history":[[1644085815144]],"_timer":4},{"_id":1644029055403,"_title":"Task Eight","_subtitle":"","_isTimerActive":true,"_history":[[1644105159394]],"_timer":5},{"_id":1644029059015,"_title":"Task Nine","_subtitle":"","_isTimerActive":false,"_history":[]},{"_id":1644029061268,"_title":"Task Ten","_subtitle":"","_isTimerActive":false,"_history":[]}]
+            } else {
+                window.alert('cannot generate samples while tasks exist')
+            }
+        }
+
+
+
+        /* #region || things to process after document load */
         window.addEventListener('load', () => {
-
-            detectTouchDevice()
 
             if (localStorage.getItem("persistentTasks") !== null) {
                 recoverLocalStorageTasks()
             }
 
+            // task input field
+            detectPressingEnter(document.querySelector('.task--input-field'), processTaskFromFieldEntry)
+            detectFocusout(document.querySelector('.task--input-field'), clearInput)
+
         })
-        /* #endregion || wait for document to load */
+        /* #endregion || things to process after document load */
 
     </script>
 
@@ -428,7 +542,7 @@
 
         <button data-action="main" class="task--btn-main">
 
-            <span class="task--details">
+            <span class="task--main-content">
                 <span class="task--title">Task Title</span>
                 <span class="task--subtitle hidden">Task Subtitle</span>
             </span>
