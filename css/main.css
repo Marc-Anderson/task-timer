@@ -536,7 +536,9 @@ header {
     background-color: rgba(0,0,0,0.08);
 }
 
-.task--entry {}
+.task--entry {
+    margin-bottom: 1em;
+}
 
 .task--btn-create {
     align-items: center;
