@@ -443,7 +443,7 @@
 
                 if ((touchendX + 50) <= touchstartX) {
                     this.toggleModMenu()
-                    // this.modButtons[0].focus()
+                    document.addEventListener('click', this.toggleModMenu.bind(this), { once: true })
                 }
 
                 // if (touchendX >= touchstartX) {
@@ -458,9 +458,9 @@
                 //     console.log('Swiped down')
                 // }
 
-                if (touchendY === touchstartY) {
-                    console.log('Tap')
-                }
+                // if (touchendY === touchstartY) {
+                //     console.log('Tap')
+                // }
             }
 
         }
