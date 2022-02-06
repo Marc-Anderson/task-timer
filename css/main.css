@@ -645,7 +645,8 @@ header {
 .task--input-field {
     margin: .2em;
     padding: 0.1em 0.1em 0em;
-    font-size: 1.4rem;
+    /* font-size: 1.4rem; */
+    font-size: 1.7rem;
     flex-grow: 1;
     text-align: center;
     border: none;
