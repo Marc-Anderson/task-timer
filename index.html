@@ -244,10 +244,12 @@
             startTimerElement(){
                 this._timer = setInterval(this.updateTimerElement.bind(this), 1000);
                 this.taskElement.classList.add('active')
+                this.taskElement.querySelector(".task--btn-toggle > .task--icon").textContent = "stop"
             }
 
             stopTimerElement(){
                 this.taskElement.classList.remove('active')
+                this.taskElement.querySelector(".task--btn-toggle > .task--icon").textContent = "play_arrow"
                 clearInterval(this._timer)
             }
             
