@@ -237,8 +237,8 @@
                     this._isTimerActive = false
                     this.stopTimerElement()
                 }
-                return currentTime
                 saveTasksToLocalStorage()
+                return currentTime
             }
 
             startTimerElement(){
@@ -535,20 +535,6 @@
         }
 
 
-        function detectFocusout(element, callback){
-            element.addEventListener('focusout', processFocusout)
-
-            function processFocusout(e){
-                callback()
-            }
-        }
-
-        function clearInput(){
-            let taskInputField = document.querySelector('.task--input-field')
-            taskInputField.value = ""
-        }
-
-
         function generateSamples() {
             if(tasks.length === 0) {
                 tasks = [{"_id":1643940717646,"_title":"Task One","_subtitle":"Task One Subtitle","_isTimerActive":true,"_history":[[1644020951759,1644026895774],[1644026902041,1644026908114],[1644026911405,1644026914177],[1644076089412]],"_active":false,"_timer":1},{"_id":1643940720302,"_title":"Task Two","_subtitle":"Task Two Subtitle","_isTimerActive":false,"_history":[[1643942842274,1643942852786],[1643942886432,1643943478246],[1643944023554,1644016756727],[1644016763083,1644020631320],[1644026903594,1644026909701]],"_active":true,"timer":1,"_timer":6},{"_id":1643940722303,"_title":"Task Three","_subtitle":"Task Three Subtitle","_isTimerActive":false,"_history":[[1643943477557,1643944824287]],"_active":false,"timer":2},{"_id":1643940724008,"_title":"Task Four","_subtitle":"Task Four Subtitle","_isTimerActive":true,"_history":[[1643943440332,1643943473015],[1644026928515]],"_active":false,"timer":2,"_timer":2},{"_id":1643940725655,"_title":"Task Five","_subtitle":"Task Five Subtitle","_isTimerActive":true,"_history":[[1644026923090,1644026925946],[1644076145710]],"_active":false,"_timer":3},{"_id":1644029047492,"_title":"Task Six","_subtitle":"","_isTimerActive":false,"_history":[]},{"_id":1644029052177,"_title":"Task Seven","_subtitle":"","_isTimerActive":true,"_history":[[1644085815144]],"_timer":4},{"_id":1644029055403,"_title":"Task Eight","_subtitle":"","_isTimerActive":true,"_history":[[1644105159394]],"_timer":5},{"_id":1644029059015,"_title":"Task Nine","_subtitle":"","_isTimerActive":false,"_history":[]},{"_id":1644029061268,"_title":"Task Ten","_subtitle":"","_isTimerActive":false,"_history":[]}]
@@ -568,29 +554,20 @@
                 recoverLocalStorageTasks()
             }
 
-            // task input field
+            // task input field - submit on enter
             detectPressingEnter(document.querySelector('.task--input-field'), processTaskFromFieldEntry)
-            detectFocusout(document.querySelector('.task--input-field'), clearInput)
+            // task input field - clear on focusout
+            document.querySelector('.task--input-field').addEventListener('focusout', (e)=>{
+                if(!e.relatedTarget || !e.relatedTarget.closest('.task--entry')){
+                    let taskInputField = document.querySelector('.task--input-field')
+                    taskInputField.value = ""
+                }
+            })
+
 
         })
         /* #endregion || things to process after document load */
 
-
-
-        /* #region || gesture tracker */
-        // let touchstartX = 0
-        // let touchstartY = 0
-        // let touchendX = 0
-        // let touchendY = 0
-
-        // element.addEventListener('touchstart', touchStartProcess, false)
-        // element.addEventListener('touchend', touchEndProcess, false) 
-
-
-
-
-
-        /* #endregion || gesture tracker */
 
 
     </script>
