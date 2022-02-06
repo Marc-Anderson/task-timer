@@ -447,7 +447,8 @@ header {
 
 .tasklist {
     --tasklist-width: min(100%, 30rem);
-    --tasklist-font-size: clamp(100%, 3vw, 120%);
+    /* --tasklist-font-size: clamp(100%, 3vw, 120%); */
+    --tasklist-font-size: 140%;
 }
 
 
