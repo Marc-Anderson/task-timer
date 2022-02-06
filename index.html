@@ -556,13 +556,16 @@
 
             // task input field - submit on enter
             detectPressingEnter(document.querySelector('.task--input-field'), processTaskFromFieldEntry)
-            // task input field - clear on focusout
-            document.querySelector('.task--input-field').addEventListener('focusout', (e)=>{
-                if(!e.relatedTarget || !e.relatedTarget.closest('.task--entry')){
-                    let taskInputField = document.querySelector('.task--input-field')
-                    taskInputField.value = ""
-                }
-            })
+
+            if(!isTouchDevice) {
+                // task input field - clear on focusout
+                document.querySelector('.task--input-field').addEventListener('focusout', (e)=>{
+                    if(!e.relatedTarget || !e.relatedTarget.closest('.task--entry')){
+                        let taskInputField = document.querySelector('.task--input-field')
+                        taskInputField.value = ""
+                    }
+                })
+            }
 
 
         })
